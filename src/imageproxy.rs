@@ -581,6 +581,9 @@ impl TryFrom<ImageProxyConfig> for Command {
                 .map_err(|e| e.into_error())?
                 .into_std();
             let fd = std::sync::Arc::new(tempfile.into());
+            // CmdFds::take_fds() replaces this, but only exists as of
+            // cap-std-ext 5.1.2, and we still accept older versions.
+            #[allow(deprecated)]
             c.take_fd_n(fd, target_fd);
             c.arg("--authfile");
             c.arg(format!("/proc/self/fd/{target_fd}"));
